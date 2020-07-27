@@ -7,3 +7,8 @@ Python3.8
 第三方插件：
 （成功安装python3后在终端输入）
 pip install lxml
+
+使用：
+（成功安装python3后在终端输入）
+python3 WebClawer4Y.py
+
