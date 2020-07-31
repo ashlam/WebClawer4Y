@@ -66,6 +66,78 @@ class TsvWriter:
         return self.filename
 
 
+class HtmlWriter:
+    def __init__(self, filename, header, rows):
+        self.filename = filename
+        self.header = header
+        self.rows = rows
+
+    def write_to_file(self):
+        with open(self.filename, 'w', encoding='utf-8') as f:
+            message = """\
+            <html>
+            <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+                <style type="text/css">
+                    table,
+                    td {{
+                        border: 1px solid #333;
+                    }}
+
+                    thead,
+                    tfoot {{
+                        background-color: #333;
+                        color: #fff;
+                    }}
+                </style>
+            </head>
+            <body>
+                <table>
+                    <thead>
+                        <tr>
+                            {0}
+                        </tr>
+                    </thead>
+                    <tbody>{1}</tbody>
+                </table>
+            </body>
+            </html>""".format(self.get_thead_from_heads(self.header), self.get_tbody_from_rows(self.rows))
+
+            f.write(message)
+            f.close()
+
+    def get_thead_from_heads(self, headers) -> str:
+        s = ''
+        
+        for i in range(len(headers)):
+            if i == 1:
+                continue
+            header = headers[i]
+            s = s + '<td>{}</td>'.format(header)
+        return s
+
+    def get_tbody_from_rows(self, rows):
+        s = ''
+        for row in rows:
+            s = s + "<tr>"
+            for i in range(len(row)):
+                # s = s + "<td>" + text + "</td>"
+                # 这里默认link是第一个元素，title是第二个元素，于是把link和title写成超链接
+                if i == 1: # title和link合并，就不写进去了
+                    continue
+                text = row[i]
+                title = ''
+                print('i = {0}, text = {1}'.format(i, text))
+                if i == 0:
+                    title = row[i + 1] if i < len(row) -1 else ''
+                s = s + "<td>{}</td>".format(text) if i > 0 else s + "<td><a href='{0}'>{1}</a></td>".format(text, title)
+            s = s + "</tr>"
+        return s
+
+    def get_result_filename(self):
+        return self.filename
+
+
 
 # 随机使用一个用户标识，用于伪装访问信息，防止一些反爬虫手段
 def get_random_user_agent():
@@ -212,7 +284,8 @@ def write_result_to_file(scaned_params, scaned_results):
         rows.append(row)
 
     # 写文件
-    writer = TsvWriter('m_result.tsv', header, rows)
+    # writer = TsvWriter('m_result.tsv', header, rows) # 用tsv
+    writer = HtmlWriter('m_result.html', header, rows) # 用html
     writer.write_to_file()
     return writer.get_result_filename()
 
