@@ -1,4 +1,4 @@
-# WebClawer4Y
-A sample of web clawer for Y.
+# WebCrawler4Y
+A sample of web crawler for Y.
 
-wiki: https://github.com/ashlam/WebClawer4Y/wiki
+wiki: https://github.com/ashlam/WebCrawler4Y/wiki
